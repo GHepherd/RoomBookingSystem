@@ -2,6 +2,7 @@ package com.scau.interceptor;
 
 import com.scau.constant.RedisConstant;
 import com.scau.utils.ThreadLocalUtil;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.log4j.Log4j2;
@@ -15,7 +16,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 @Log4j2
 public class TokenInterceptor implements HandlerInterceptor {
-    @Autowired
+    @Resource
     private RedisTemplate redisTemplate;
     /**
      * 请求前将userId存入到当前线程中
