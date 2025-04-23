@@ -1,7 +1,9 @@
 package com.scau.controller;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller("/scau/bookings")
+@RestController
+@RequestMapping("/scau/bookings")
 public class BookingController {
 }

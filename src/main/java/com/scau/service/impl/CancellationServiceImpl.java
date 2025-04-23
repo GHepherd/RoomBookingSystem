@@ -1,7 +1,7 @@
 package com.scau.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.scau.entity.Cancellation;
+import com.scau.entity.pojo.Cancellation;
 import com.scau.service.CancellationService;
 import com.scau.mapper.CancellationMapper;
 import org.springframework.stereotype.Service;

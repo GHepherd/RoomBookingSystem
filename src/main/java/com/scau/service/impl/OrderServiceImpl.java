@@ -1,7 +1,7 @@
 package com.scau.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.scau.entity.Order;
+import com.scau.entity.pojo.Order;
 import com.scau.service.OrderService;
 import com.scau.mapper.OrderMapper;
 import org.springframework.stereotype.Service;

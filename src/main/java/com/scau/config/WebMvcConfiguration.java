@@ -25,6 +25,6 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         log.info("开始注册自定义拦截器...");
         registry.addInterceptor(tokenInterceptor)
                 .addPathPatterns("/scau/**")
-                .excludePathPatterns("/scau/user/login","/scau/user/register");
+                .excludePathPatterns("/scau/users/login","/scau/users/register");
     }
 }

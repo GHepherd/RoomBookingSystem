@@ -1,7 +1,10 @@
 package com.scau.service;
 
-import com.scau.entity.User;
+import com.scau.entity.dto.UserDto;
+import com.scau.entity.pojo.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.scau.entity.vo.UserLoginVo;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
 * @author ASUS
@@ -10,4 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface UserService extends IService<User> {
 
+    void register(UserDto userDto) ;
+
+    UserLoginVo login(UserDto userDto);
 }

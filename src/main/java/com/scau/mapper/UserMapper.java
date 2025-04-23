@@ -1,7 +1,8 @@
 package com.scau.mapper;
 
-import com.scau.entity.User;
+import com.scau.entity.pojo.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
 
 /**
 * @author ASUS

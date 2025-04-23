@@ -1,6 +1,6 @@
 package com.scau.service;
 
-import com.scau.entity.Cancellation;
+import com.scau.entity.pojo.Cancellation;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

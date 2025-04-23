@@ -1,7 +1,7 @@
 package com.scau.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.scau.entity.Booking;
+import com.scau.entity.pojo.Booking;
 import com.scau.service.BookingService;
 import com.scau.mapper.BookingMapper;
 import org.springframework.stereotype.Service;

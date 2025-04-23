@@ -1,6 +1,6 @@
 package com.scau.mapper;
 
-import com.scau.entity.Booking;
+import com.scau.entity.pojo.Booking;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

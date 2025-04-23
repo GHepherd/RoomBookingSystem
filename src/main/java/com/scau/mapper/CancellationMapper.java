@@ -1,6 +1,6 @@
 package com.scau.mapper;
 
-import com.scau.entity.Cancellation;
+import com.scau.entity.pojo.Cancellation;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

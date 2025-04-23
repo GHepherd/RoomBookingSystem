@@ -1,6 +1,6 @@
 package com.scau.service;
 
-import com.scau.entity.Order;
+import com.scau.entity.pojo.Order;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
