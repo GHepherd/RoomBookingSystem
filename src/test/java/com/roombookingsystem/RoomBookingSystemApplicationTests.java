@@ -11,7 +11,6 @@ class RoomBookingSystemApplicationTests {
 
     @Test
     void contextLoads() {
-        redisTemplate.opsForValue().set("test1", "success");
     }
 
 }
