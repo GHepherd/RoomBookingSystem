@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.scau.mapper.RoomMapper">
 
-    <resultMap id="BaseResultMap" type="com.scau.entity.Room">
+    <resultMap id="BaseResultMap" type="com.scau.entity.pojo.Room">
             <id property="roomid" column="roomId" />
             <result property="name" column="name" />
             <result property="type" column="type" />

@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.scau.mapper.CancellationMapper">
 
-    <resultMap id="BaseResultMap" type="com.scau.entity.Cancellation">
+    <resultMap id="BaseResultMap" type="com.scau.entity.pojo.Cancellation">
             <id property="cancellationid" column="cancellationId" />
             <result property="bookingId" column="booking_id" />
             <result property="status" column="status" />
