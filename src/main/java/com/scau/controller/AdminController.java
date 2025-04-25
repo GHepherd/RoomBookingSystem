@@ -6,10 +6,7 @@ import com.scau.entity.pojo.Room;
 import com.scau.service.RoomService;
 import com.scau.service.impl.RoomServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("scau/admin")
@@ -21,4 +18,6 @@ public class AdminController {
         roomService.createRoom(roomCreateDto);
         return ResponseResult.successResult();
     }
+    @PutMapping("rooms/{roomId}")
+    public ResponseResult
 }
