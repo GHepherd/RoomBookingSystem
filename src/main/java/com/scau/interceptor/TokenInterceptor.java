@@ -30,10 +30,10 @@ public class TokenInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String token = request.getHeader("token");
         String key= RedisConstant.LOGIN+token;
-        Long userId = (Long) redisTemplate.opsForValue().get(key);
+        Integer userId = (Integer) redisTemplate.opsForValue().get(key);
         if(userId != null){
             //存入到当前线程中
-            ThreadLocalUtil.setUserId(userId);
+            ThreadLocalUtil.setUserId(Long.valueOf(userId));
         }
         return true;
     }

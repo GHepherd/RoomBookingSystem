@@ -18,11 +18,6 @@ public class BookingController {
     private BookingService bookingService;
     @Autowired
     private RoomService roomService;
-
-    @GetMapping("/rooms")
-    public ResponseResult getBookingRooms() {
-        return ResponseResult.successResult();
-    }
     /**
      * 根据条件获取会议室列表
      * @param bookingRoomPageDto
