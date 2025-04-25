@@ -86,7 +86,7 @@ public class Room {
     /**
      * 是否删除(0-未删除,1-已删除)
      */
-    private Integer isdeleted;
+    private Integer isDeleted;
 
     /**
      * 创建时间

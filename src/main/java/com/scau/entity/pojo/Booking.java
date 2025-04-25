@@ -23,7 +23,7 @@ public class Booking {
     /**
      * 用户ID
      */
-    private Long userid;
+    private Long userId;
 
     /**
      * 会议室ID

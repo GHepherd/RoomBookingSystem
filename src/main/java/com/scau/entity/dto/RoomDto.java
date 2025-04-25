@@ -3,9 +3,9 @@ package com.scau.entity.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.Date;
+
 @Data
-public class RoomCreateDto {
+public class RoomDto {
     private String name;
     private String type;
     private Integer capacity;

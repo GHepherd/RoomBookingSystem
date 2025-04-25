@@ -16,4 +16,8 @@ public interface UserService extends IService<User> {
     void register(UserDto userDto) ;
 
     UserLoginVo login(UserDto userDto);
+
+    void createStaff(UserDto userDto);
+
+    void updateUserStatus(Long userId, Integer status);
 }

@@ -21,7 +21,7 @@ public class User {
      * 用户ID
      */
     @TableId(type = IdType.AUTO)
-    private Long userid;
+    private Long userId;
 
     /**
      * 账号
@@ -66,7 +66,7 @@ public class User {
     /**
      * 是否删除(0-未删除,1-已删除)
      */
-    private Integer isdeleted;
+    private Integer isDeleted;
 
     /**
      * 创建时间

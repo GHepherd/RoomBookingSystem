@@ -5,10 +5,12 @@ import cn.hutool.core.lang.UUID;
 import cn.hutool.core.lang.generator.SnowflakeGenerator;
 import cn.hutool.crypto.digest.MD5;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scau.constant.RedisConstant;
 import com.scau.entity.dto.UserDto;
+import com.scau.entity.pojo.Room;
 import com.scau.entity.pojo.User;
 import com.scau.entity.vo.UserLoginVo;
 import com.scau.exception.ErrorPasswordException;
@@ -48,7 +50,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .role(userDto.getRole())
                 .status(0)
                 .balance(new BigDecimal(0))
-                .isdeleted(0)
+                .isDeleted(0)
                 .createTime(new Date())
                 .updateTime(new Date()).build();
         userMapper.insert(user);
@@ -66,7 +68,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new ErrorPasswordException();
         }
         String token = UUID.fastUUID().toString();
-        Long userId=user.getUserid();
+        Long userId=user.getUserId();
         String key = RedisConstant.LOGIN+token;
         redisTemplate.opsForValue().set(key,userId);
         UserLoginVo userLoginVo = UserLoginVo.builder()
@@ -74,6 +76,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .status(user.getStatus())
                 .role(user.getRole()).build();
         return userLoginVo;
+    }
+
+    /**
+     * 新建员工
+     * @param userDto
+     */
+    @Override
+    public void createStaff(UserDto userDto) {
+        User user = User.builder()
+                .username(userDto.getUsername())
+                .password(MD5.create().digestHex(userDto.getPassword()))
+                .name(userDto.getName())
+                .phone(userDto.getPhone())
+                .role(userDto.getRole())
+                .build();
+        userMapper.insert(user);
+    }
+
+    /**
+     * 解冻/冻结用户 0解冻 1冻结
+     * @param userId
+     * @param status
+     */
+    @Override
+    public void updateUserStatus(Long userId, Integer status) {
+        User user = User.builder()
+                .status(status).build();
+        userMapper.updateById(user);
     }
 }
 

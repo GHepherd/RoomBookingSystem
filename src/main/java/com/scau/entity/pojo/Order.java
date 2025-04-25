@@ -28,12 +28,12 @@ public class Order {
     /**
      * 用户ID
      */
-    private Long userid;
+    private Long userId;
 
     /**
      * 支付金额
      */
-    private BigDecimal totalamount;
+    private BigDecimal totalAmount;
 
     /**
      * 状态(0-未支付,1-已支付,2-已退款)

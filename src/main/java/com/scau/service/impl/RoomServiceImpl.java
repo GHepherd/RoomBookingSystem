@@ -1,11 +1,11 @@
 package com.scau.service.impl;
 
-import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scau.constant.RedisConstant;
 import com.scau.entity.dto.BookingRoomPageDto;
-import com.scau.entity.dto.RoomCreateDto;
+import com.scau.entity.dto.RoomDto;
 import com.scau.entity.pojo.Room;
 import com.scau.entity.vo.BookingRoomPageVo;
 import com.scau.entity.vo.BookingRoomVo;
@@ -34,25 +34,25 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
     @Autowired
     private RoomMapper roomMapper;
     @Override
-    public void createRoom(RoomCreateDto roomCreateDto) {
+    public void createRoom(RoomDto roomDto) {
         Long userId = ThreadLocalUtil.getUserId();
         if (userId == null) {
             throw new UserNotLoginException();
         }
         Room room = Room.builder()
-                .name(roomCreateDto.getName())
-                .type(roomCreateDto.getType())
-                .capacity(roomCreateDto.getCapacity())
-                .hasProjector(roomCreateDto.getHasProjector())
-                .hasSound(roomCreateDto.getHasSound())
-                .hasNetwork(roomCreateDto.getHasNetwork())
-                .price(roomCreateDto.getPrice())
-                .description(roomCreateDto.getDescription())
-                .area(roomCreateDto.getArea())
-                .status(roomCreateDto.getStatus())
-                .startTime(roomCreateDto.getStartTime())
-                .endTime(roomCreateDto.getEndTime())
-                .isdeleted(0)
+                .name(roomDto.getName())
+                .type(roomDto.getType())
+                .capacity(roomDto.getCapacity())
+                .hasProjector(roomDto.getHasProjector())
+                .hasSound(roomDto.getHasSound())
+                .hasNetwork(roomDto.getHasNetwork())
+                .price(roomDto.getPrice())
+                .description(roomDto.getDescription())
+                .area(roomDto.getArea())
+                .status(roomDto.getStatus())
+                .startTime(roomDto.getStartTime())
+                .endTime(roomDto.getEndTime())
+                .isDeleted(0)
                 .createTime(new Date())
                 .updateTime(new Date()).build();
         roomMapper.insert(room);
@@ -81,7 +81,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
         queryWrapper.eq(bookingRoomPageDto.getType()!=null&& !bookingRoomPageDto.getType().isEmpty(),"type",bookingRoomPageDto.getType());
         queryWrapper.like(bookingRoomPageDto.getKeyword()!=null&&bookingRoomPageDto.getKeyword().isEmpty(),"name",bookingRoomPageDto.getKeyword());
         queryWrapper.ne("status",4);
-        queryWrapper.orderByAsc("room_id");
+        queryWrapper.orderByDesc("roomId");
         List<Room> rooms = roomMapper.selectList(queryWrapper);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String date = sdf.format(bookingRoomPageDto.getBookDay());
@@ -121,7 +121,46 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
         return bookingRoomPageVo;
     }
 
+    /**
+     * 更新会议室
+     * @param roomDto
+     * @param roomId
+     */
+    @Override
+    public void updateRoom(RoomDto roomDto, Long roomId) {
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null) {
+            throw new UserNotLoginException();
+        }
+        Room room = Room.builder()
+                .name(roomDto.getName())
+                .type(roomDto.getType())
+                .capacity(roomDto.getCapacity())
+                .hasProjector(roomDto.getHasProjector())
+                .hasSound(roomDto.getHasSound())
+                .hasNetwork(roomDto.getHasNetwork())
+                .price(roomDto.getPrice())
+                .description(roomDto.getDescription())
+                .area(roomDto.getArea())
+                .status(roomDto.getStatus())
+                .startTime(roomDto.getStartTime())
+                .endTime(roomDto.getEndTime())
+                .isDeleted(0)
+                .createTime(new Date())
+                .updateTime(new Date()).build();
+        UpdateWrapper<Room> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("room_id",roomId);
+        roomMapper.update(room,updateWrapper);
+    }
 
+    /**
+     * 删除会议室
+     * @param roomId
+     */
+    @Override
+    public void deleteRoom(Long roomId) {
+        roomMapper.deleteById(roomId);
+    }
 }
 
 
