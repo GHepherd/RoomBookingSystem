@@ -1,8 +1,10 @@
 package com.scau.service;
 
+import com.scau.entity.dto.BookingRoomPageDto;
 import com.scau.entity.dto.RoomCreateDto;
 import com.scau.entity.pojo.Room;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.scau.entity.vo.BookingRoomPageVo;
 
 /**
 * @author ASUS
@@ -12,4 +14,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface RoomService extends IService<Room> {
 
     void createRoom(RoomCreateDto roomCreateDto);
+
+    BookingRoomPageVo getBookingRooms(BookingRoomPageDto bookingRoomPageDto);
 }

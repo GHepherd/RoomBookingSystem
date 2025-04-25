@@ -6,15 +6,15 @@ import java.util.Date;
 
 @Data
 public class BookingRoomPageDto {
-    int page;
-    int pageSize;
+    Integer page;
+    Integer pageSize;
     Date bookDay;
-    int startTime;
-    int endTime;
-    int capacity;
-    int hasProjector;
-    int hasSound;
-    int hasNetwork;
+    Integer startTime;
+    Integer endTime;
+    Integer capacity;
+    Integer hasProjector;
+    Integer hasSound;
+    Integer hasNetwork;
     String type;
     String keyword;
 }
