@@ -23,7 +23,6 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
     private RoomMapper roomMapper;
     @Override
     public void createRoom(RoomCreateDto roomCreateDto) {
-        if ()
         Room room = Room.builder()
                 .name(roomCreateDto.getName())
                 .type(roomCreateDto.getType())
