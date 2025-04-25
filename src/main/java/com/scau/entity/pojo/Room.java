@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -13,6 +15,7 @@ import lombok.Data;
  */
 @TableName(value ="room")
 @Data
+@Builder
 public class Room {
     /**
      * 会议室ID
@@ -69,6 +72,16 @@ public class Room {
      * 状态(free-空闲,occupied-使用中,maintenance-维护)
      */
     private Integer status;
+
+    /**
+     * 开始时间
+     */
+    private Integer startTime;
+
+    /**
+     * 结束时间
+     */
+    private Integer endTime;
 
     /**
      * 是否删除(0-未删除,1-已删除)

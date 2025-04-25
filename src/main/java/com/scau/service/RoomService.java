@@ -1,5 +1,6 @@
 package com.scau.service;
 
+import com.scau.entity.dto.RoomCreateDto;
 import com.scau.entity.pojo.Room;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,4 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface RoomService extends IService<Room> {
 
+    void createRoom(RoomCreateDto roomCreateDto);
 }
