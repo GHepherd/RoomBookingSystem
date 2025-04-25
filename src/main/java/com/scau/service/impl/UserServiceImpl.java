@@ -7,6 +7,7 @@ import cn.hutool.crypto.digest.MD5;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.scau.constant.RedisConstant;
 import com.scau.entity.dto.UserDto;
 import com.scau.entity.pojo.User;
 import com.scau.entity.vo.UserLoginVo;
@@ -66,10 +67,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         String token = UUID.fastUUID().toString();
         Long userId=user.getUserid();
-        redisTemplate.opsForValue().set(token,userId);
+        String key = RedisConstant.LOGIN+token;
+        redisTemplate.opsForValue().set(key,userId);
         UserLoginVo userLoginVo = UserLoginVo.builder()
                 .token(token)
-                .status(user.getStatus()).build();
+                .status(user.getStatus())
+                .role(user.getRole()).build();
         return userLoginVo;
     }
 }
