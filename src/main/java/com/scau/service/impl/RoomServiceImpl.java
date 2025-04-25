@@ -79,9 +79,9 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
         queryWrapper.eq(bookingRoomPageDto.getHasSound()!=null,"has_sound",bookingRoomPageDto.getHasSound());
         queryWrapper.eq(bookingRoomPageDto.getHasNetwork()!=null,"has_network",bookingRoomPageDto.getHasNetwork());
         queryWrapper.eq(bookingRoomPageDto.getType()!=null&& !bookingRoomPageDto.getType().isEmpty(),"type",bookingRoomPageDto.getType());
-        queryWrapper.like(bookingRoomPageDto.getKeyword()!=null&&bookingRoomPageDto.getKeyword().isEmpty(),"keyword",bookingRoomPageDto.getKeyword());
+        queryWrapper.like(bookingRoomPageDto.getKeyword()!=null&&bookingRoomPageDto.getKeyword().isEmpty(),"name",bookingRoomPageDto.getKeyword());
         queryWrapper.ne("status",4);
-        queryWrapper.orderByDesc("roomId");
+        queryWrapper.orderByAsc("room_id");
         List<Room> rooms = roomMapper.selectList(queryWrapper);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String date = sdf.format(bookingRoomPageDto.getBookDay());
@@ -89,21 +89,12 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
         Integer endTime = bookingRoomPageDto.getEndTime();
         List<BookingRoomVo> bookingRoomVos = new ArrayList<>();
         for (Room room : rooms) {
-            String key = RedisConstant.BOOKING_ROOM_LOCK+room.getRoomId().toString()+":"+date;
-            Long bitmap = (Long) redisTemplate.opsForValue().get(key);
-            if(bitmap!=null){
-                long bookTime=0L;
-                for (int i = startTime; i<=endTime; i++) {
-                    bookTime=(bookTime+i)<<1;
-                }
-                bookTime<<=startTime-1;
-                if((bookTime&bitmap)!=0){
-                    continue;
-                }
+            String key = RedisConstant.BOOKING_ROOM_LOCK+date+":"+room.getRoomId().toString();
+            List<Boolean> list = new ArrayList<>();
+            for (int i =startTime;i<=endTime;i++){
+                list.add(redisTemplate.opsForValue().getBit(key,i));
             }
-            else {
-                redisTemplate.opsForValue().set(key,0L);
-            }
+            if(list.stream().anyMatch(a->a))continue;
             BookingRoomVo bookingRoomVo=BookingRoomVo.builder()
                     .roomId(room.getRoomId())
                     .name(room.getName())

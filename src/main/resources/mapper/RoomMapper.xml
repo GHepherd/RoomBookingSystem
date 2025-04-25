@@ -5,7 +5,7 @@
 <mapper namespace="com.scau.mapper.RoomMapper">
 
     <resultMap id="BaseResultMap" type="com.scau.entity.pojo.Room">
-            <id property="roomid" column="roomId" />
+            <id property="roomid" column="room_id" />
             <result property="name" column="name" />
             <result property="type" column="type" />
             <result property="capacity" column="capacity" />
