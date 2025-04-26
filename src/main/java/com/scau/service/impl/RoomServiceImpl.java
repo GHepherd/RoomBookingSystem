@@ -2,14 +2,19 @@ package com.scau.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scau.constant.RedisConstant;
 import com.scau.entity.dto.BookingRoomPageDto;
 import com.scau.entity.dto.RoomDto;
+import com.scau.entity.dto.RoomPageDto;
 import com.scau.entity.pojo.Room;
+import com.scau.entity.vo.AdminRoomVo;
 import com.scau.entity.vo.BookingRoomPageVo;
 import com.scau.entity.vo.BookingRoomVo;
+import com.scau.entity.vo.AdminRoomPageVo;
 import com.scau.exception.UserNotLoginException;
+import com.scau.mapper.UserMapper;
 import com.scau.service.RoomService;
 import com.scau.mapper.RoomMapper;
 import com.scau.utils.ThreadLocalUtil;
@@ -22,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * @author ASUS
@@ -33,10 +39,12 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
     implements RoomService{
     @Autowired
     private RoomMapper roomMapper;
+    @Autowired
+    private UserMapper userMapper;
     @Override
     public void createRoom(RoomDto roomDto) {
         Long userId = ThreadLocalUtil.getUserId();
-        if (userId == null) {
+        if (userId == null){
             throw new UserNotLoginException();
         }
         Room room = Room.builder()
@@ -129,7 +137,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
     @Override
     public void updateRoom(RoomDto roomDto, Long roomId) {
         Long userId = ThreadLocalUtil.getUserId();
-        if (userId == null) {
+        if (userId == null){
             throw new UserNotLoginException();
         }
         Room room = Room.builder()
@@ -159,7 +167,52 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
      */
     @Override
     public void deleteRoom(Long roomId) {
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null){
+            throw new UserNotLoginException();
+        }
         roomMapper.deleteById(roomId);
+    }
+
+    /**
+     * 会议室分页查询（管理员）
+     * @param roomPageDto
+     * @return
+     */
+    @Override
+    public AdminRoomPageVo getRooms(RoomPageDto roomPageDto) {
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null){
+            throw new UserNotLoginException();
+        }
+        AdminRoomPageVo adminRoomPageVo = new AdminRoomPageVo();
+        Page<Room> page = new Page<>(roomPageDto.getPage(),roomPageDto.getPageSize());
+        QueryWrapper<Room> queryWrapper = new QueryWrapper<>();
+        if (roomPageDto.getKeyword() != null){
+            queryWrapper.like("name",roomPageDto.getKeyword());
+        }
+        Page<Room> roomPage = roomMapper.selectPage(page,queryWrapper);
+        List<AdminRoomVo> list = roomPage.getRecords().stream()
+                .map(room -> {
+                    AdminRoomVo adminRoomVo = new AdminRoomVo();
+                    adminRoomVo.setRoomId(room.getRoomId());
+                    adminRoomVo.setName(room.getName());
+                    adminRoomVo.setType(room.getType());
+                    adminRoomVo.setCapacity(room.getCapacity());
+                    adminRoomVo.setHasProjector(room.getHasProjector());
+                    adminRoomVo.setHasSound(room.getHasSound());
+                    adminRoomVo.setHasNetwork(room.getHasNetwork());
+                    adminRoomVo.setPrice(room.getPrice());
+                    adminRoomVo.setDescription(room.getDescription());
+                    adminRoomVo.setArea(room.getArea());
+                    adminRoomVo.setStatus(room.getStatus());
+                    adminRoomVo.setStartTime(room.getStartTime());
+                    adminRoomVo.setEndTime(room.getEndTime());
+                    return adminRoomVo;
+        }).collect(Collectors.toList());
+        adminRoomPageVo.setList(list);
+        adminRoomPageVo.setTotal(list.size());
+        return adminRoomPageVo;
     }
 }
 

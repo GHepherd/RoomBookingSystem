@@ -2,28 +2,36 @@ package com.scau.service.impl;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.UUID;
-import cn.hutool.core.lang.generator.SnowflakeGenerator;
 import cn.hutool.crypto.digest.MD5;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scau.constant.RedisConstant;
+import com.scau.entity.dto.UserBalanceDto;
 import com.scau.entity.dto.UserDto;
-import com.scau.entity.pojo.Room;
+import com.scau.entity.dto.UserPageDto;
 import com.scau.entity.pojo.User;
+import com.scau.entity.vo.UserGetVo;
 import com.scau.entity.vo.UserLoginVo;
+import com.scau.entity.vo.AdminGetUsersPageVo;
+import com.scau.entity.vo.AdminGetUsersVo;
 import com.scau.exception.ErrorPasswordException;
 import com.scau.exception.UserAlreadyExistException;
 import com.scau.exception.UserNotExistException;
+import com.scau.exception.UserNotLoginException;
 import com.scau.service.UserService;
 import com.scau.mapper.UserMapper;
+import com.scau.utils.ThreadLocalUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
 * @author ASUS
@@ -31,6 +39,7 @@ import java.util.Date;
 * @createDate 2025-04-23 00:20:53
 */
 @Service
+@Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService{
 
@@ -89,6 +98,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     @Override
     public void createStaff(UserDto userDto) {
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null){
+            throw new UserNotLoginException();
+        }
         User user = User.builder()
                 .username(userDto.getUsername())
                 .password(MD5.create().digestHex(userDto.getPassword()))
@@ -106,8 +119,117 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     @Override
     public void updateUserStatus(Long userId, Integer status) {
+        Long currentUserId = ThreadLocalUtil.getUserId();
+        if (currentUserId == null){
+            throw new UserNotLoginException();
+        }
         User user = User.builder()
+                .userId(userId)
                 .status(status).build();
+        userMapper.updateById(user);
+    }
+
+    /**
+     * 管理员分页查询用户
+     * @param userPageDto
+     * @return
+     */
+    @Override
+    public AdminGetUsersPageVo getUsers(UserPageDto userPageDto) {
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null){
+            throw new UserNotLoginException();
+        }
+        AdminGetUsersPageVo adminGetUsersPageVo = new AdminGetUsersPageVo();
+        Page<User> page = new Page<>(userPageDto.getPage(),userPageDto.getPageSize());
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        if (userPageDto.getKeyword() != null){
+            queryWrapper.like("username",userPageDto.getKeyword());
+        }
+        if (userPageDto.getStatus() != null){
+            queryWrapper.like("status",userPageDto.getStatus());
+        }
+        Page<User> userPage = userMapper.selectPage(page,queryWrapper);
+        List<AdminGetUsersVo> list = userPage.getRecords().stream()
+                .map(user -> {
+                    AdminGetUsersVo adminGetUsersVo = new AdminGetUsersVo();
+                    adminGetUsersVo.setUserId(user.getUserId());
+                    adminGetUsersVo.setUsername(user.getUsername());
+                    adminGetUsersVo.setName(user.getName());
+                    adminGetUsersVo.setPhone(user.getPhone());
+                    adminGetUsersVo.setCompany(user.getCompany());
+                    adminGetUsersVo.setStatus(user.getStatus());
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    String datetime = sdf.format(user.getCreateTime());
+                    adminGetUsersVo.setCreateTime(datetime);
+                    return adminGetUsersVo;
+                }).collect(Collectors.toList());
+        adminGetUsersPageVo.setList(list);
+        adminGetUsersPageVo.setTotal(list.size());
+        return adminGetUsersPageVo;
+    }
+
+    /**
+     * 用户查询用户信息
+     * @return
+     */
+    @Override
+    public UserGetVo getUser() {
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null){
+            throw new UserNotLoginException();
+        }
+        User user = userMapper.selectById(userId);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String datetime = sdf.format(user.getCreateTime());
+        UserGetVo userGetVo = UserGetVo.builder()
+                .username(user.getUsername())
+                .name(user.getName())
+                .phone(user.getPhone())
+                .role(user.getRole())
+                .company(user.getCompany())
+                .status(user.getStatus())
+                .balance(user.getBalance())
+                .createTime(datetime)
+                .build();
+        return userGetVo;
+    }
+
+    /**
+     * 用户更新信息
+     * @param userDto
+     */
+    @Override
+    public void updateUser(UserDto userDto) {
+        Long currentUserId = ThreadLocalUtil.getUserId();
+        if (currentUserId == null){
+            throw new UserNotLoginException();
+        }
+        User user = User.builder()
+                .userId(currentUserId)
+                .phone(userDto.getPhone())
+                .name(userDto.getName())
+                .company(userDto.getCompany())
+                .password(MD5.create().digestHex(userDto.getPassword()))
+                .build();
+        userMapper.updateById(user);
+    }
+
+    /**
+     * 用户充值
+     * @param amount
+     */
+    @Override
+    public void rechargeUser(UserBalanceDto userBalanceDto) {
+        Long currentUserId = ThreadLocalUtil.getUserId();
+        if (currentUserId == null){
+            throw new UserNotLoginException();
+        }
+        BigDecimal balance = userMapper.selectById(currentUserId).getBalance();
+        User user = User.builder()
+                .userId(currentUserId)
+                .balance(balance.add(userBalanceDto.getAmount()))
+                .build();
         userMapper.updateById(user);
     }
 }

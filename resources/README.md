@@ -6,6 +6,7 @@
 - **路径**: `/api/users/register`
 - **方法**: POST
 - **请求参数**:
+  
   ```json
   {
     "username": "string",   // 账号
@@ -129,7 +130,7 @@
 
 ### 2. 用户列表
 - **路径**: `/api/admin/users`
-- **方法**: POST
+- **方法**: GET
 - **请求头**: 
   ```
   Authorization: Bearer {adminToken}
@@ -191,12 +192,14 @@
   Authorization: Bearer {adminToken}
   ```
 - **请求参数**:
+  
   ```json
   {
     "username": "string",   // 账号
     "password": "string",   // 密码
     "name": "string",       // 姓名
-    "phone": "string"       // 联系电话
+    "phone": "string" ,      // 联系电话
+    "role": "staff"
   }
   ```
 - **返回参数**:
@@ -229,8 +232,8 @@
     "description": "string", // 描述
     "area": 50               // 面积(平方米)
     "status": 0              // 状态(0 free-空闲,1 locked-锁定,2 booked-已预订,3 occupied-使用中, 4 maintenance-维护)
-    "startTime":date
-    "endTime":date
+    "startTime":8
+    "endTime":23
   }
   ```
 - **返回参数**:
@@ -262,8 +265,8 @@
     "description": "string", // 描述
     "area": 50               // 面积(平方米)
     "status": 0              // 0空闲   1 被锁定  2 被预定  3正在使用   4维护
-    "startTime":date
-    "endTime":date
+    "startTime":8
+    "endTime":23
   }
   ```
 - **返回参数**:
@@ -327,8 +330,8 @@
           "description": "string",
           "area": 50,
           "status": 0,    // 0空闲   1 被锁定  2 被预定  3正在使用   4维护
-           "startTime":date
-          "endTime":date
+           "startTime":8
+          "endTime":23
         }
       ]
     }
