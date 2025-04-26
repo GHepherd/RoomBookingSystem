@@ -1,10 +1,12 @@
 package com.scau.service;
 
 import com.scau.entity.dto.UserDto;
+import com.scau.entity.dto.UserPageDto;
 import com.scau.entity.pojo.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.scau.entity.vo.UserGetVo;
 import com.scau.entity.vo.UserLoginVo;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.scau.entity.vo.AdminGetUsersPageVo;
 
 /**
 * @author ASUS
@@ -20,4 +22,8 @@ public interface UserService extends IService<User> {
     void createStaff(UserDto userDto);
 
     void updateUserStatus(Long userId, Integer status);
+
+    AdminGetUsersPageVo getUsers(UserPageDto userPageDto);
+
+    UserGetVo getUser();
 }
