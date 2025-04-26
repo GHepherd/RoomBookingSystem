@@ -33,6 +33,13 @@ public class ResponseResult<T> implements Serializable {
         responseResult.code = 2;
         return responseResult;
     }
+    public static <T> ResponseResult<T> successResult(String message,T object) {
+        ResponseResult<T> responseResult = new ResponseResult<T>();
+        responseResult.message=message;
+        responseResult.data = object;
+        responseResult.code = 2;
+        return responseResult;
+    }
 
     /**
      * 成功 返回数据

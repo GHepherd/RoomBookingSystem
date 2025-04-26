@@ -49,12 +49,13 @@ CREATE TABLE `room` (
 CREATE TABLE `booking` (
   `booking_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '预订ID',
   `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `order_id` int(11) NOT NULL COMMENT '订单ID',
   `room_id` int(11) NOT NULL COMMENT '会议室ID',
   `date` date NOT NULL COMMENT '预订日期',
-  `start_hour` int(11) NOT NULL COMMENT '开始小时(8-21)',
-  `end_hour` int(11) NOT NULL COMMENT '结束小时(8-21)',
+  `start_time` int(11) NOT NULL COMMENT '开始小时(8-21)',
+  `end_time` int(11) NOT NULL COMMENT '结束小时(8-21)',
   `total_amount` decimal(10,2) NOT NULL COMMENT '总金额',
-  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态(toBeReviewd-待审核)',
+  `status` tinyint NOT NULL DEFAULT 0 COMMENT '状态(0 预订成功 1 toBeReviewd-待退款审核)',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`booking_id`)
@@ -71,12 +72,15 @@ CREATE TABLE `cancellation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='取消预订申请表';
 
 -- 支付记录表
-CREATE TABLE `order` (
+CREATE TABLE `orders` (
   `order_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
-  `booking_id` int(11) NOT NULL COMMENT '预订ID',
   `user_id` int(11) NOT NULL COMMENT '用户ID',
+  `room_id` int(11) NOT NULL COMMENT '会议室ID',
+  `date` date NOT NULL COMMENT '预订日期',
+  `start_time` int(11) NOT NULL COMMENT '开始小时(8-21)',
+  `end_time` int(11) NOT NULL COMMENT '结束小时(8-21)',
   `total_amount` decimal(10,2) NOT NULL COMMENT '支付金额',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态(0-未支付,1-已支付,2-已退款)',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态(0-未支付,1-已支付,2-已退款 3-超时取消)',
   `payment_time` datetime DEFAULT NULL COMMENT '支付时间',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',

@@ -3,6 +3,7 @@ package com.scau.config;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
+import org.redisson.config.SingleServerConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -37,11 +38,7 @@ public class RedisConfig {
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
     }
-    @Bean
-    public RedissonClient redisson() {
-        Config config = new Config();
-        config.useSingleServer().setAddress("redis://localhost:6379").setDatabase(0);
-        return Redisson.create(config);
-    }
+
+
 
 }

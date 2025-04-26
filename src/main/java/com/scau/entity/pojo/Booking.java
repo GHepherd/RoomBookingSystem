@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -13,6 +15,7 @@ import lombok.Data;
  */
 @TableName(value ="booking")
 @Data
+@Builder
 public class Booking {
     /**
      * 预订ID
@@ -24,7 +27,10 @@ public class Booking {
      * 用户ID
      */
     private Long userId;
-
+    /**
+     * 订单ID
+     */
+    private Long orderId;
     /**
      * 会议室ID
      */
@@ -38,12 +44,12 @@ public class Booking {
     /**
      * 开始小时(8-21)
      */
-    private Integer startHour;
+    private Integer startTime;
 
     /**
      * 结束小时(8-21)
      */
-    private Integer endHour;
+    private Integer endTime;
 
     /**
      * 总金额

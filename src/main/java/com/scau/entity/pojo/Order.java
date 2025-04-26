@@ -5,14 +5,17 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.math.BigDecimal;
 import java.util.Date;
+
+import lombok.Builder;
 import lombok.Data;
 
 /**
  * 支付记录表
  * @TableName order
  */
-@TableName(value ="order")
+@TableName(value ="orders")
 @Data
+@Builder
 public class Order {
     /**
      * ID
@@ -20,15 +23,31 @@ public class Order {
     @TableId(type = IdType.AUTO)
     private Long orderId;
 
-    /**
-     * 预订ID
-     */
-    private Long bookingId;
 
     /**
      * 用户ID
      */
     private Long userId;
+
+    /**
+     * 会议室ID
+     */
+    private Long roomId;
+
+    /**
+     * 预订日期
+     */
+    private Date date;
+
+    /**
+     * 开始小时(8-21)
+     */
+    private Integer startTime;
+
+    /**
+     * 结束小时(8-21)
+     */
+    private Integer endTime;
 
     /**
      * 支付金额

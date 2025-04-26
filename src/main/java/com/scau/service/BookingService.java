@@ -1,7 +1,10 @@
 package com.scau.service;
 
+import com.scau.entity.dto.BookingRoomPageDto;
+import com.scau.entity.dto.SubmitBookingRoomDto;
 import com.scau.entity.pojo.Booking;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.scau.entity.vo.SuccessBookingPageVo;
 
 /**
 * @author ASUS
@@ -10,4 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface BookingService extends IService<Booking> {
 
+    void submitBookingRoom(Long roomId, SubmitBookingRoomDto submitBookingRoomDto);
+
+    SuccessBookingPageVo getBookings(BookingRoomPageDto bookingRoomPageDto);
 }

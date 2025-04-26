@@ -14,6 +14,7 @@ import com.scau.entity.pojo.Room;
 import com.scau.entity.pojo.User;
 import com.scau.entity.vo.UserLoginVo;
 import com.scau.exception.ErrorPasswordException;
+import com.scau.exception.UserAlreadyExistException;
 import com.scau.exception.UserNotExistException;
 import com.scau.service.UserService;
 import com.scau.mapper.UserMapper;
@@ -41,6 +42,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public void register(UserDto userDto) {
         Assert.notNull(userDto);
+        Long count = userMapper.selectCount(new QueryWrapper<User>().eq("username", userDto.getUsername()));
+        if (count > 0) {
+            throw new UserAlreadyExistException();
+        }
         User user = User.builder()
                 .username(userDto.getUsername())
                 .password(MD5.create().digestHex(userDto.getPassword()))
