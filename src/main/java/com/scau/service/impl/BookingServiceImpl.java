@@ -159,6 +159,7 @@ public class BookingServiceImpl extends ServiceImpl<BookingMapper, Booking>
     }
 
     @Override
+    @Transactional
     public BookingCancelVo cancelBooking(Long bookingId) {
         Long userId = ThreadLocalUtil.getUserId();
         if(userId == null){
@@ -171,20 +172,20 @@ public class BookingServiceImpl extends ServiceImpl<BookingMapper, Booking>
         Date t2 = new Date();
         Date t3 = new Date();
         BigDecimal estimatedRefund = new BigDecimal(0);
-        t1.setTime(date.getTime()+86400000);
-        t2.setTime(date.getTime()+86400000*2);
-        t3.setTime(date.getTime()+86400000*3);
-        if(now.before(t3)){
-            estimatedRefund = estimatedRefund.add(booking.getTotalAmount());
+        t1.setTime(date.getTime()-86400000);
+        t2.setTime(date.getTime()-86400000*2);
+        t3.setTime(date.getTime()-86400000*3);
+        if(now.after(t1)){
+            throw new BaseException("取消失败,已超时");
         }
-        else if(now.before(t2)){
-            estimatedRefund = estimatedRefund.add(booking.getTotalAmount().multiply(new BigDecimal("0.75")));
-        }
-        else if(now.before(t1)){
+        else if(now.after(t2)){
             estimatedRefund = estimatedRefund.add(booking.getTotalAmount().multiply(new BigDecimal("0.25")));
         }
+        else if(now.after(t3)){
+            estimatedRefund = estimatedRefund.add(booking.getTotalAmount().multiply(new BigDecimal("0.75")));
+        }
         else {
-            throw new BaseException("取消失败,已超时");
+            estimatedRefund = estimatedRefund.add(booking.getTotalAmount());
         }
         Cancellation cancellation = new Cancellation();
         cancellation.setBookingId(bookingId);
@@ -194,6 +195,9 @@ public class BookingServiceImpl extends ServiceImpl<BookingMapper, Booking>
         BookingCancelVo bookingCancelVo = new BookingCancelVo();
         bookingCancelVo.setCancellationId(cancellation.getCancellationId());
         bookingCancelVo.setEstimatedRefund(cancellation.getRefundAmount());
+        booking.setStatus(1);
+        booking.setUpdateTime(new Date());
+        bookingMapper.updateById(booking);
         return bookingCancelVo;
     }
 }

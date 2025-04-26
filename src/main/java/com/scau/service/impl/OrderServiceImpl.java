@@ -110,6 +110,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         user.setUpdateTime(new Date());
         userMapper.updateById(user);
         order.setStatus(1);
+        order.setPaymentTime(new Date());
         order.setUpdateTime(new Date());
         orderMapper.updateById(order);
         Booking booking = Booking.builder()
