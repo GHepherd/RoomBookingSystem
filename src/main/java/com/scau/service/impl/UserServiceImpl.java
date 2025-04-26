@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scau.constant.RedisConstant;
+import com.scau.entity.dto.UserBalanceDto;
 import com.scau.entity.dto.UserDto;
 import com.scau.entity.dto.UserPageDto;
 import com.scau.entity.pojo.User;
@@ -128,6 +129,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         userMapper.updateById(user);
     }
 
+    /**
+     * 管理员分页查询用户
+     * @param userPageDto
+     * @return
+     */
     @Override
     public AdminGetUsersPageVo getUsers(UserPageDto userPageDto) {
         Long userId = ThreadLocalUtil.getUserId();
@@ -163,6 +169,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return adminGetUsersPageVo;
     }
 
+    /**
+     * 用户查询用户信息
+     * @return
+     */
     @Override
     public UserGetVo getUser() {
         Long userId = ThreadLocalUtil.getUserId();
@@ -183,6 +193,44 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .createTime(datetime)
                 .build();
         return userGetVo;
+    }
+
+    /**
+     * 用户更新信息
+     * @param userDto
+     */
+    @Override
+    public void updateUser(UserDto userDto) {
+        Long currentUserId = ThreadLocalUtil.getUserId();
+        if (currentUserId == null){
+            throw new UserNotLoginException();
+        }
+        User user = User.builder()
+                .userId(currentUserId)
+                .phone(userDto.getPhone())
+                .name(userDto.getName())
+                .company(userDto.getCompany())
+                .password(MD5.create().digestHex(userDto.getPassword()))
+                .build();
+        userMapper.updateById(user);
+    }
+
+    /**
+     * 用户充值
+     * @param amount
+     */
+    @Override
+    public void rechargeUser(UserBalanceDto userBalanceDto) {
+        Long currentUserId = ThreadLocalUtil.getUserId();
+        if (currentUserId == null){
+            throw new UserNotLoginException();
+        }
+        BigDecimal balance = userMapper.selectById(currentUserId).getBalance();
+        User user = User.builder()
+                .userId(currentUserId)
+                .balance(balance.add(userBalanceDto.getAmount()))
+                .build();
+        userMapper.updateById(user);
     }
 }
 

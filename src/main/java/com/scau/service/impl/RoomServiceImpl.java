@@ -43,7 +43,10 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
     private UserMapper userMapper;
     @Override
     public void createRoom(RoomDto roomDto) {
-        judgeAdmin();
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null){
+            throw new UserNotLoginException();
+        }
         Room room = Room.builder()
                 .name(roomDto.getName())
                 .type(roomDto.getType())
@@ -133,7 +136,10 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
      */
     @Override
     public void updateRoom(RoomDto roomDto, Long roomId) {
-        judgeAdmin();
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null){
+            throw new UserNotLoginException();
+        }
         Room room = Room.builder()
                 .name(roomDto.getName())
                 .type(roomDto.getType())
@@ -162,8 +168,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
     @Override
     public void deleteRoom(Long roomId) {
         Long userId = ThreadLocalUtil.getUserId();
-        String role = userMapper.selectById(userId).getRole();
-        if (userId == null && role.equals("admin")){
+        if (userId == null){
             throw new UserNotLoginException();
         }
         roomMapper.deleteById(roomId);
@@ -176,7 +181,10 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
      */
     @Override
     public AdminRoomPageVo getRooms(RoomPageDto roomPageDto) {
-        Long userId = judgeAdmin();
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null){
+            throw new UserNotLoginException();
+        }
         AdminRoomPageVo adminRoomPageVo = new AdminRoomPageVo();
         Page<Room> page = new Page<>(roomPageDto.getPage(),roomPageDto.getPageSize());
         QueryWrapper<Room> queryWrapper = new QueryWrapper<>();
@@ -205,14 +213,6 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
         adminRoomPageVo.setList(list);
         adminRoomPageVo.setTotal(list.size());
         return adminRoomPageVo;
-    }
-    private Long judgeAdmin(){
-        Long userId = ThreadLocalUtil.getUserId();
-        String role = userMapper.selectById(userId).getRole();
-        if (userId == null || !role.equals("admin")){
-            throw new UserNotLoginException();
-        }
-        return userId;
     }
 }
 
