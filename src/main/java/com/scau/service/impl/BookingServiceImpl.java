@@ -8,13 +8,17 @@ import com.scau.constant.RedisConstant;
 import com.scau.entity.dto.BookingRoomPageDto;
 import com.scau.entity.dto.SubmitBookingRoomDto;
 import com.scau.entity.pojo.Booking;
+import com.scau.entity.pojo.Cancellation;
 import com.scau.entity.pojo.Order;
 import com.scau.entity.pojo.Room;
+import com.scau.entity.vo.BookingCancelVo;
 import com.scau.entity.vo.SuccessBookingPageVo;
 import com.scau.entity.vo.SuccessBookingVo;
+import com.scau.exception.BaseException;
 import com.scau.exception.RoomHasBeenBookedException;
 import com.scau.exception.SubmitBookingErrorException;
 import com.scau.exception.UserNotLoginException;
+import com.scau.mapper.CancellationMapper;
 import com.scau.mapper.OrderMapper;
 import com.scau.mapper.RoomMapper;
 import com.scau.service.BookingService;
@@ -54,6 +58,8 @@ public class BookingServiceImpl extends ServiceImpl<BookingMapper, Booking>
     private OrderMapper orderMapper;
     @Autowired
     private DelayMsgUtil delayMsgUtil;
+    @Autowired
+    private CancellationMapper cancellationMapper;
 
     /**
      * 提交预约请求
@@ -150,6 +156,45 @@ public class BookingServiceImpl extends ServiceImpl<BookingMapper, Booking>
         }).toList();
         successBookingPageVo.setSuccessBookingVos(successBookingVos);
         return successBookingPageVo;
+    }
+
+    @Override
+    public BookingCancelVo cancelBooking(Long bookingId) {
+        Long userId = ThreadLocalUtil.getUserId();
+        if(userId == null){
+            throw new UserNotLoginException();
+        }
+        Booking booking = bookingMapper.selectById(bookingId);
+        Date date = booking.getDate();
+        Date now = new Date();
+        Date t1 = new Date();
+        Date t2 = new Date();
+        Date t3 = new Date();
+        BigDecimal estimatedRefund = new BigDecimal(0);
+        t1.setTime(date.getTime()+86400000);
+        t2.setTime(date.getTime()+86400000*2);
+        t3.setTime(date.getTime()+86400000*3);
+        if(now.before(t3)){
+            estimatedRefund = estimatedRefund.add(booking.getTotalAmount());
+        }
+        else if(now.before(t2)){
+            estimatedRefund = estimatedRefund.add(booking.getTotalAmount().multiply(new BigDecimal("0.75")));
+        }
+        else if(now.before(t1)){
+            estimatedRefund = estimatedRefund.add(booking.getTotalAmount().multiply(new BigDecimal("0.25")));
+        }
+        else {
+            throw new BaseException("取消失败,已超时");
+        }
+        Cancellation cancellation = new Cancellation();
+        cancellation.setBookingId(bookingId);
+        cancellation.setStatus(0);
+        cancellation.setRefundAmount(estimatedRefund);
+        cancellationMapper.insert(cancellation);
+        BookingCancelVo bookingCancelVo = new BookingCancelVo();
+        bookingCancelVo.setCancellationId(cancellation.getCancellationId());
+        bookingCancelVo.setEstimatedRefund(cancellation.getRefundAmount());
+        return bookingCancelVo;
     }
 }
 

@@ -3,6 +3,7 @@ package com.scau.controller;
 import com.scau.entity.ResponseResult;
 import com.scau.entity.dto.BookingRoomPageDto;
 import com.scau.entity.dto.SubmitBookingRoomDto;
+import com.scau.entity.vo.BookingCancelVo;
 import com.scau.entity.vo.BookingRoomPageVo;
 import com.scau.entity.vo.SuccessBookingPageVo;
 import com.scau.service.BookingService;
@@ -48,5 +49,16 @@ public class BookingController {
     @GetMapping("/bookings")
     public ResponseResult<SuccessBookingPageVo> getBookings(@RequestBody BookingRoomPageDto bookingRoomPageDto) {
         return ResponseResult.successResult(bookingService.getBookings(bookingRoomPageDto));
+    }
+
+    /**
+     * 申请取消预订
+     * @param bookingId
+     * @return
+     */
+    @PostMapping("/{bookingId}/cancel")
+    public ResponseResult<BookingCancelVo> cancelBooking(@PathVariable Long bookingId) {
+        BookingCancelVo bookingCancelVo = bookingService.cancelBooking(bookingId);
+        return ResponseResult.successResult(bookingCancelVo);
     }
 }

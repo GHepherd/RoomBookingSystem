@@ -60,10 +60,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         if(order==null){
             throw new OrderNotExistException();
         }
-        if(order.getStatus()==1){
-            throw new BaseException("订单已支付，请到到预订信息中取消");
-        }
-        if(order.getStatus()==2||order.getStatus()==3){
+        if(order.getStatus()!=0){
             return;
         }
         order.setStatus(3);
