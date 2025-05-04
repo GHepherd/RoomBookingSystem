@@ -36,4 +36,6 @@ public class ResponseConstant {
 
     public static final String NO_OPERATOR_AUTH = "无权限操作";
 
+    public static final String UPDATE_SUCCESS = "更新成功";
+
 }

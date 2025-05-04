@@ -5,8 +5,11 @@ import com.scau.entity.dto.RoomDto;
 import com.scau.entity.dto.RoomPageDto;
 import com.scau.entity.pojo.Room;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.scau.entity.vo.AllRoomStatusVO;
 import com.scau.entity.vo.BookingRoomPageVo;
 import com.scau.entity.vo.AdminRoomPageVo;
+
+import java.util.List;
 
 /**
 * @author ASUS
@@ -24,4 +27,8 @@ public interface RoomService extends IService<Room> {
     void deleteRoom(Long roomId);
 
     AdminRoomPageVo getRooms(RoomPageDto roomPageDto);
+
+    void updateStatus(Long roomId, RoomDto roomDto);
+
+    List<AllRoomStatusVO> getAllRoomStatus();
 }

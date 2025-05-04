@@ -1,12 +1,15 @@
 package com.scau.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scau.constant.RedisConstant;
 import com.scau.constant.ResponseConstant;
-import com.scau.entity.pojo.Booking;
-import com.scau.entity.pojo.Cancellation;
-import com.scau.entity.pojo.Order;
-import com.scau.entity.pojo.User;
+import com.scau.entity.dto.OrderPageDto;
+import com.scau.entity.pojo.*;
+import com.scau.entity.vo.OrderCancellationVO;
 import com.scau.exception.BaseException;
 import com.scau.exception.UserNotLoginException;
 import com.scau.mapper.BookingMapper;
@@ -15,13 +18,16 @@ import com.scau.mapper.UserMapper;
 import com.scau.service.CancellationService;
 import com.scau.mapper.CancellationMapper;
 import com.scau.utils.ThreadLocalUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
 * @author ASUS
@@ -46,14 +52,12 @@ public class CancellationServiceImpl extends ServiceImpl<CancellationMapper, Can
     @Override
     @Transactional
     public void process(Long cancellationId) {
-        Long userId = ThreadLocalUtil.getUserId();
-        User user = userMapper.selectById(userId);
-        if(!user.getRole().equals("staff")){
-            throw new BaseException(ResponseConstant.NO_OPERATOR_AUTH);
-        }
-        if(userId == null){
+        Long userId=ThreadLocalUtil.getUserId();
+        if(userId==null)
             throw new UserNotLoginException();
-        }
+        User user=userMapper.selectById(userId);
+        if(!user.getRole().equals("staff"))
+            throw new BaseException(ResponseConstant.NO_OPERATOR_AUTH);
         Cancellation cancellation = cancellationMapper.selectById(cancellationId);
         Long bookingId = cancellation.getBookingId();
         Booking booking = bookingMapper.selectById(bookingId);
@@ -85,6 +89,28 @@ public class CancellationServiceImpl extends ServiceImpl<CancellationMapper, Can
             }
             throw new BaseException("发生未知错误，请重试");
         }
+    }
+
+    @Override
+    public OrderCancellationVO getCancellation(OrderPageDto orderPageDto) {
+        Long userId=ThreadLocalUtil.getUserId();
+        if(userId==null)
+            throw new UserNotLoginException();
+        User user=userMapper.selectById(userId);
+        if(!user.getRole().equals("staff"))
+            throw new BaseException(ResponseConstant.NO_OPERATOR_AUTH);
+        OrderCancellationVO vo=new OrderCancellationVO();
+        Integer page=orderPageDto.getPage();
+        Integer pageSize=orderPageDto.getPageSize();
+        LambdaQueryWrapper<Cancellation> queryWrapper=new LambdaQueryWrapper<>();
+        Page<Cancellation> p=new Page<>(page,pageSize);
+        queryWrapper.eq(Cancellation::getStatus,0);
+        Page<Cancellation> pg=cancellationMapper.selectPage(p,queryWrapper);
+        Long total=pg.getTotal();
+        vo.setTotal(total);
+        List<OrderCancellation> orderCancellations=cancellationMapper.getOrderCancellation((page-1)*pageSize,pageSize);
+        vo.setList(orderCancellations);
+        return vo;
     }
 }
 

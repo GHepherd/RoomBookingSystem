@@ -3,6 +3,7 @@
 ## 用户模块
 
 ### 1. 用户注册
+
 - **路径**: `/api/users/register`
 - **方法**: POST
 - **请求参数**:
@@ -16,23 +17,26 @@
     "role": "customer",     // 角色(固定为customer,管理员和员工不开放注册系统)
     "company": "string"     // 所属公司(客户必填)
   }
-
+  ```
 
   后端在插入用户后，要更新一条数据到管理员提醒审核
-  ```
+
+```
 - **返回参数**:
-  ```json
-  {
-    "code": 200,
-    "message": "注册成功，请等待管理员审核",
-    "data": null
-  }
-  ```
+```json
+{
+  "code": 200,
+  "message": "注册成功，请等待管理员审核",
+  "data": null
+}
+```
 
 ### 2. 用户登录
+
 - **路径**: `/api/users/login`
 - **方法**: POST
 - **请求参数**:
+  
   ```json
   {
     "username": "string",   // 账号
@@ -40,6 +44,7 @@
   }
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -52,13 +57,16 @@
   ```
 
 ### 3. 获取用户信息
+
 - **路径**: `/api/users/info`
 - **方法**: GET
 - **请求头**: 
+  
   ```
   Authorization: Bearer {token}
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -77,13 +85,16 @@
   ```
 
 ### 4. 修改用户信息
+
 - **路径**: `/api/users/update`
 - **方法**: PUT
 - **请求头**: 
+  
   ```
   Authorization: Bearer {token}
   ```
 - **请求参数**:
+  
   ```json
   {
     "phone": "string",      // 联系电话(可选)
@@ -93,6 +104,7 @@
   }
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -101,21 +113,24 @@
   }
   ```
 
+### 5. 用户充值
 
-  ### 5. 用户充值
 - **路径**: `/api/users/recharge`
 - **方法**: PUT
 - **请求头**: 
+  
   ```
   Authorization: Bearer {token}
   ```
 - **请求参数**:
+  
   ```json
   {
     "amount":100  //充值金额
   }
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -124,27 +139,29 @@
   }
   ```
 
-
-
 ## 管理员模块
 
 ### 2. 用户列表
+
 - **路径**: `/api/admin/users`
-- **方法**: GET
+- **方法**: POST
 - **请求头**: 
+  
   ```
   Authorization: Bearer {adminToken}
   ```
 - **请求参数**:
-```json
+  
+  ```json
   {
       page: 1               // 页码
       pageSize: 10          // 每页数量
       status: 0             // 状态(可选)    状态(0-待审核, 1-正常, 2-冻结   3-所有)
       keyword: "string"     // 关键字搜索(可选) 以username为准
   }
-```
+  ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -167,15 +184,21 @@
   ```
 
 ### 3. 冻结/解冻用户
+
 - **路径**: `/api/admin/users/{userId}/{status}`    0解冻   1冻结
+
 - **方法**: PUT
+
 - **请求头**: 
+  
   ```
   Authorization: Bearer {adminToken}
   ```
+
 - **请求参数**:
 
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -185,9 +208,11 @@
   ```
 
 ### 4. 创建员工
+
 - **路径**: `/api/admin/staff`
 - **方法**: POST
 - **请求头**: 
+  
   ```
   Authorization: Bearer {adminToken}
   ```
@@ -198,11 +223,11 @@
     "username": "string",   // 账号
     "password": "string",   // 密码
     "name": "string",       // 姓名
-    "phone": "string" ,      // 联系电话
-    "role": "staff"
+    "phone": "string"       // 联系电话
   }
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -211,15 +236,17 @@
   }
   ```
 
-
 ### 5. 创建会议室
+
 - **路径**: `/api/admin/room`
 - **方法**: POST
 - **请求头**: 
+  
   ```
   Authorization: Bearer {adminToken}
   ```
 - **请求参数**:
+  
   ```json
   {
     "name": "string",        // 会议室名称
@@ -232,11 +259,12 @@
     "description": "string", // 描述
     "area": 50               // 面积(平方米)
     "status": 0              // 状态(0 free-空闲,1 locked-锁定,2 booked-已预订,3 occupied-使用中, 4 maintenance-维护)
-    "startTime":8
-    "endTime":23
+    "startTime":date
+    "endTime":date
   }
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -246,13 +274,16 @@
   ```
 
 ### 2. 修改会议室
+
 - **路径**: `/api/admin/rooms/{roomId}`
 - **方法**: PUT
 - **请求头**: 
+  
   ```
   Authorization: Bearer {adminToken}
   ```
 - **请求参数**:
+  
   ```json
   {
     "name": "string",        // 会议室名称
@@ -265,11 +296,12 @@
     "description": "string", // 描述
     "area": 50               // 面积(平方米)
     "status": 0              // 0空闲   1 被锁定  2 被预定  3正在使用   4维护
-    "startTime":8
-    "endTime":23
+    "startTime":date
+    "endTime":date
   }
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -279,13 +311,16 @@
   ```
 
 ### 3. 删除会议室
+
 - **路径**: `/api/admin/rooms/{roomId}`
 - **方法**: DELETE
 - **请求头**: 
+  
   ```
   Authorization: Bearer {adminToken}
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -295,22 +330,29 @@
   ```
 
 ### 4. 获取会议室列表(管理员)
+
 - **路径**: `/api/admin/rooms`
+
 - **方法**: GET
+
 - **请求头**: 
+  
   ```
   Authorization: Bearer {adminToken}
   ```
+
 - **请求参数**:
+  
   ```json
   {
       page: 1               // 页码
       pageSize: 10          // 每页数量
       keyword: "string"     // 关键字搜索(可选)   会议室名称
   }
-   
   ```
+
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -330,36 +372,34 @@
           "description": "string",
           "area": 50,
           "status": 0,    // 0空闲   1 被锁定  2 被预定  3正在使用   4维护
-           "startTime":8
-          "endTime":23
+           "startTime":date
+          "endTime":date
         }
       ]
     }
   }
   ```
 
-
-
-
-
-
-
 ## 员工操作模块
 
 ### 1. 会议室状态管理
+
 - **路径**: `/api/staff/rooms/{roomId}/status`
 - **方法**: PUT
 - **请求头**: 
+  
   ```
   Authorization: Bearer {staffToken}
   ```
 - **请求参数**:
+  
   ```json
   {
-    "status": "free",      // 状态(free-空闲, occupied-使用中, maintenance-维护)
+    "status": 0,      // 0空闲   1 被锁定  2 被预定  3正在使用   4维护
   }
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -369,13 +409,16 @@
   ```
 
 ### 2. 获取全部会议室状态
+
 - **路径**: `/api/staff/rooms/status`
 - **方法**: GET
 - **请求头**: 
+  
   ```
   Authorization: Bearer {staffToken}
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -384,22 +427,28 @@
       {
         "roomId": 1,
         "name": "string",
-        "status": "free",          // 状态(free-空闲, occupied-使用中, maintenance-维护)
+        "status": 0,      // 0空闲   1 被锁定  2 被预定  3正在使用   4维护
       }
     ]
   }
   ```
 
 ### 3. 处理退订申请
+
 - **路径**: `/api/staff/cancellations/{cancellationId}/process`
+
 - **方法**: POST
+
 - **请求头**: 
+  
   ```
   Authorization: Bearer {staffToken}
   ```
+
 - **请求参数**:
 
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -409,18 +458,22 @@
   ```
 
 ### 4. 获取退订申请列表
+
 - **路径**: `/api/staff/cancellations`
 - **方法**: GET
 - **请求头**: 
+  
   ```
   Authorization: Bearer {staffToken}
   ```
 - **请求参数**:
+  
   ```
   page: 1               // 页码
   pageSize: 10          // 每页数量
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -436,10 +489,10 @@
           "roomName": "string",
           "userId": 4,
           "userName": "string",
-          "startTime": "string",
-          "endTime": "string",
+          "startTime": "Integer",
+          "endTime": "Integer",
           "totalAmount": 100,
-          "applyTime": "string",
+          "paymentTime": "string",
           "refundAmount": 75.5
         }
       ]
@@ -447,33 +500,26 @@
   }
   ```
 
-
-
-
-
-
-
-
-
-
-
-
 ## 预订模块
 
 ### 1. 根据条件获取会议室列表    ✓
+
 - **路径**: `/api/booking/rooms`
+
 - **方法**: Get
   **请求头**: 
   
   ```
   Authorization: Bearer {userToken}
   ```
+
 - **请求参数**:   json
+  
   ```
   page: 1               // 页码
   pageSize: 10          // 每页数量
   bookDay:date          //预约日期  年月日 具体到日
-  startTime: 8		//起始时间 int类型
+  startTime: 8        //起始时间 int类型
   endTime: 9
   
   capacity: 20          // 最小容纳人数(可选)
@@ -482,9 +528,10 @@
   hasNetwork: true      // 是否有网络(可选)
   type: "classroom"     // 类型(可选)
   keyword: "string"     // 关键字搜索(可选)    房间名
-   
   ```
+
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -513,49 +560,50 @@
   }
   ```
 
+### 2. 提交预约请求 ✓      用redis上锁   lock:roomId:Date(具体到日)  :  bitmap     成功预约后需要生成订单信息插入数据库。   lock：订单号：
 
-
-
-### 2. 提交预约请求 ✓      用redis上锁   lock:roomId:Date(具体到日)  :  bitmap     成功预约后需要生成订单信息插入数据库。   lock：订单号： 
 - **路径**: `/api/book/{roomId}`
 - **方法**: POST
   **请求头**: 
+  
   ```
   Authorization: Bearer {userToken}
   ```
   - **请求参数**:   json
-  ```
-  bookDay:date          //预约日期  年月日 具体到日
-  startTime: date
-  endTime:date
+    
+    ```
+    bookDay:date          //预约日期  年月日 具体到日
+    startTime: date
+    endTime:date
+    ```
 
-
-  ```
+```
 - **返回参数**:
-  ```json
-  {
-    "code": 200,
-    "message": "成功",
-    "data": null
-  }
-  ```
-
-
-
+```json
+{
+  "code": 200,
+  "message": "成功",
+  "data": null
+}
+```
 
 ### 6. 获取我的成功预订列表      ✓
+
 - **路径**: `/api/booking/bookings`
 - **方法**: GET
 - **请求头**: 
+  
   ```
   Authorization: Bearer {token}
   ```
 - **请求参数**:
+  
   ```json
   page: 1               // 页码
   pageSize: 10          // 每页数量
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -578,17 +626,22 @@
   }
   ```
 
-
 ### 8. 申请取消预订   ✓  在会议开始前的24h内不能取消，24-48h内退25%  48-72退75%   提前72小时退全款    推到员工处
+
 - **路径**: `/api/booking/{bookingId}/cancel`
+
 - **方法**: POST
+
 - **请求头**: 
+  
   ```
   Authorization: Bearer {token}
   ```
+
 - **请求参数**:
 
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -600,22 +653,24 @@
   }
   ```
 
+## 订单模块
 
+### 5. 支付订单    order表   booking表
 
-
-  ## 订单模块
-
-
-  ### 5. 支付订单    order表   booking表
 - **路径**: `/api/order/{orderId}`
+
 - **方法**: POST
+
 - **请求头**: 
+  
   ```
   Authorization: Bearer {usertoken}
   ```
+
 - **请求参数**:
 
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
@@ -623,46 +678,56 @@
     "data": null
   }
   ```
-   ```json
+  
+  ```json
   {
-    "code": 200,
-    "message": "支付失败",
-    "data": null
+   "code": 200,
+   "message": "支付失败",
+   "data": null
   }
-   ```
+  ```
+  
+  ### 5. 未支付且取消订单      order表
 
- ### 5. 未支付且取消订单      order表
 - **路径**: `/api/order/{orderId}`
+
 - **方法**: POST
+
 - **请求头**: 
+  
   ```
   Authorization: Bearer {usertoken}
   ```
+
 - **请求参数**:
 
 - **返回参数**:
+  
   ```json
   {
     "code": 200,
     "message": "取消成功",
     "data": null
   }
-  
-
+  ```
 
 ### 6. 获取订单列表      ✓      order表
+
 - **路径**: `/api/order/list`
 - **方法**: GET
 - **请求头**: 
+  
   ```
   Authorization: Bearer {token}
   ```
 - **请求参数**:
+  
   ```json
   page: 1               // 页码
   pageSize: 10          // 每页数量
   ```
 - **返回参数**:
+  
   ```json
   {
     "code": 200,

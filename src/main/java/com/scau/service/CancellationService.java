@@ -1,7 +1,9 @@
 package com.scau.service;
 
+import com.scau.entity.dto.OrderPageDto;
 import com.scau.entity.pojo.Cancellation;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.scau.entity.vo.OrderCancellationVO;
 
 /**
 * @author ASUS
@@ -11,4 +13,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface CancellationService extends IService<Cancellation> {
 
     void process(Long cancellationId);
+
+    OrderCancellationVO getCancellation(OrderPageDto orderPageDto);
 }

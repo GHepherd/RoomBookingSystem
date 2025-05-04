@@ -3,6 +3,8 @@ create database roombooking
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
+use roombooking;
+
 -- 用户表
 CREATE TABLE `user` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',

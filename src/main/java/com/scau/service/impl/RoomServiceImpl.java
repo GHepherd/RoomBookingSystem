@@ -1,23 +1,25 @@
 package com.scau.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scau.constant.RedisConstant;
+import com.scau.constant.ResponseConstant;
 import com.scau.entity.dto.BookingRoomPageDto;
 import com.scau.entity.dto.RoomDto;
 import com.scau.entity.dto.RoomPageDto;
 import com.scau.entity.pojo.Room;
-import com.scau.entity.vo.AdminRoomVo;
-import com.scau.entity.vo.BookingRoomPageVo;
-import com.scau.entity.vo.BookingRoomVo;
-import com.scau.entity.vo.AdminRoomPageVo;
+import com.scau.entity.pojo.User;
+import com.scau.entity.vo.*;
+import com.scau.exception.BaseException;
 import com.scau.exception.UserNotLoginException;
 import com.scau.mapper.UserMapper;
 import com.scau.service.RoomService;
 import com.scau.mapper.RoomMapper;
 import com.scau.utils.ThreadLocalUtil;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -214,6 +216,41 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
         adminRoomPageVo.setTotal(list.size());
         return adminRoomPageVo;
     }
+
+    @Override
+    public void updateStatus(Long roomId, RoomDto roomDto) {
+        Long userId=ThreadLocalUtil.getUserId();
+        if(userId==null)
+            throw new UserNotLoginException();
+        User user=userMapper.selectById(userId);
+        if(!user.getRole().equals("staff"))
+            throw new BaseException(ResponseConstant.NO_OPERATOR_AUTH);
+        Integer status=roomDto.getStatus();
+        LambdaUpdateWrapper<Room> updateWrapper=new LambdaUpdateWrapper<>();
+        updateWrapper.set(Room::getStatus,status)
+                .eq(Room::getRoomId,roomId);
+    }
+
+    @Override
+    public List<AllRoomStatusVO> getAllRoomStatus() {
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null)
+            throw new UserNotLoginException();
+        User user = userMapper.selectById(userId);
+        if (!user.getRole().equals("staff"))
+            throw new BaseException(ResponseConstant.NO_OPERATOR_AUTH);
+        List<Room> rooms = roomMapper.selectList(new QueryWrapper<>());
+        return rooms.stream().map(
+                room -> {
+                    AllRoomStatusVO roomStatusVO=new AllRoomStatusVO();
+                    BeanUtils.copyProperties(room,roomStatusVO);
+                    return roomStatusVO;
+                }
+        ).toList();
+    }
+
+
+
 }
 
 
