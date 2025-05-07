@@ -217,7 +217,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     /**
      * 用户充值
-     * @param amount
+     * @param userBalanceDto
      */
     @Override
     public void rechargeUser(UserBalanceDto userBalanceDto) {
