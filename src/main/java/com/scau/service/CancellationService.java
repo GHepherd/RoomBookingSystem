@@ -10,4 +10,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface CancellationService extends IService<Cancellation> {
 
+    void process(Long cancellationId);
 }
