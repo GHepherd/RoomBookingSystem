@@ -1,10 +1,8 @@
 package com.scau.controller;
 
 import com.scau.entity.ResponseResult;
-import com.scau.entity.dto.RoomDto;
-import com.scau.entity.dto.RoomPageDto;
-import com.scau.entity.dto.UserDto;
-import com.scau.entity.dto.UserPageDto;
+import com.scau.entity.dto.*;
+import com.scau.entity.vo.AdminGetStaffsPageVo;
 import com.scau.entity.vo.AdminRoomPageVo;
 import com.scau.entity.vo.AdminGetUsersPageVo;
 import com.scau.service.RoomService;
@@ -48,12 +46,17 @@ public class AdminController {
         return ResponseResult.successResult();
     }
 
-    @GetMapping("/users")
+    @PostMapping("/users")
     public ResponseResult<AdminGetUsersPageVo> getUsers(@RequestBody UserPageDto userPageDto){
         return ResponseResult.successResult(userService.getUsers(userPageDto));
     }
 
-    @GetMapping("/rooms")
+    @PostMapping("/staffs")
+    public ResponseResult<AdminGetStaffsPageVo> getStaffs(@RequestBody StaffPageDto staffPageDto){
+        return ResponseResult.successResult(userService.getStaffs(staffPageDto));
+    }
+
+    @PostMapping("/rooms")
     public ResponseResult<AdminRoomPageVo> getRooms(@RequestBody RoomPageDto roomPageDto){
         return ResponseResult.successResult(roomService.getRooms(roomPageDto));
     }

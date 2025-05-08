@@ -28,7 +28,7 @@ public class OrderController {
      * @param orderId
      * @return
      */
-    @DeleteMapping("/{orderId}")
+    @DeleteMapping("/{orderId}/cancel")
     public ResponseResult cancelOrder(@PathVariable Long orderId) {
         orderService.orderCancel(orderId);
         return ResponseResult.successResult("取消成功");
@@ -39,7 +39,7 @@ public class OrderController {
      * @param orderPageDto
      * @return
      */
-    @GetMapping("/list")
+    @PostMapping("/list")
     public ResponseResult<OrderPageVo> getOrderPage(@RequestBody OrderPageDto orderPageDto) {
         OrderPageVo orderPageVo = orderService.getOrderPage(orderPageDto);
         return ResponseResult.successResult(orderPageVo);

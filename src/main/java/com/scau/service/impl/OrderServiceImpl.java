@@ -17,7 +17,6 @@ import com.scau.exception.UserNotExistException;
 import com.scau.exception.UserNotLoginException;
 import com.scau.mapper.BookingMapper;
 import com.scau.mapper.UserMapper;
-import com.scau.service.BookingService;
 import com.scau.service.OrderService;
 import com.scau.mapper.OrderMapper;
 import com.scau.utils.ThreadLocalUtil;
@@ -55,6 +54,37 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
      */
     @Override
     public void orderCancel(Long orderId) {
+        //更新订单状态
+        Order order = orderMapper.selectById(orderId);
+        if(order==null){
+            throw new OrderNotExistException();
+        }
+        if(order.getStatus()!=0){
+            return;
+        }
+        order.setStatus(2);
+        order.setUpdateTime(new Date());
+        orderMapper.updateById(order);
+        Integer startTime = order.getStartTime();
+        Integer endTime = order.getEndTime();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String date = sdf.format(order.getDate());
+        String key = RedisConstant.BOOKING_ROOM_LOCK+date+":"+order.getRoomId();
+        for(int i=startTime;i<=endTime;i++){
+            //释放redis中的锁
+            redisTemplate.opsForValue().setBit(key,i,false);
+        }
+
+    }
+
+
+
+    /**
+     * 关闭订单
+     * @param orderId
+     */
+    @Override
+    public void delayOrderCancel(Long orderId) {
         //更新订单状态
         Order order = orderMapper.selectById(orderId);
         if(order==null){

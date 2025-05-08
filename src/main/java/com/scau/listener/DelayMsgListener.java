@@ -37,7 +37,7 @@ public class DelayMsgListener {
                 }
                 if(StringUtils.isNotBlank(take)){
                     log.info("监听到延迟关单消息：{}", take);
-                    orderService.orderCancel(Long.valueOf(take));
+                    orderService.delayOrderCancel(Long.valueOf(take));
                 }
             }
         });

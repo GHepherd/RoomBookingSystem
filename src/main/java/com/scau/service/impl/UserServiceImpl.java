@@ -7,14 +7,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.scau.constant.RedisConstant;
+import com.scau.entity.dto.StaffPageDto;
 import com.scau.entity.dto.UserBalanceDto;
 import com.scau.entity.dto.UserDto;
 import com.scau.entity.dto.UserPageDto;
 import com.scau.entity.pojo.User;
-import com.scau.entity.vo.UserGetVo;
-import com.scau.entity.vo.UserLoginVo;
-import com.scau.entity.vo.AdminGetUsersPageVo;
-import com.scau.entity.vo.AdminGetUsersVo;
+import com.scau.entity.vo.*;
 import com.scau.exception.ErrorPasswordException;
 import com.scau.exception.UserAlreadyExistException;
 import com.scau.exception.UserNotExistException;
@@ -102,18 +100,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (userId == null){
             throw new UserNotLoginException();
         }
+
+        List<User> usernames = userMapper.selectList(new QueryWrapper<User>().eq("username", userDto.getUsername()));
+        if(usernames != null) throw new UserAlreadyExistException();
+
         User user = User.builder()
                 .username(userDto.getUsername())
                 .password(MD5.create().digestHex(userDto.getPassword()))
                 .name(userDto.getName())
                 .phone(userDto.getPhone())
-                .role(userDto.getRole())
+                .role("staff")
+                .status(1)
                 .build();
         userMapper.insert(user);
     }
 
     /**
-     * 解冻/冻结用户 0解冻 1冻结
+     * 解冻/冻结用户 0解冻 1冻结 2审核   禁用/解禁 staff  0
      * @param userId
      * @param status
      */
@@ -123,6 +126,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (currentUserId == null){
             throw new UserNotLoginException();
         }
+        if(status == 0) status = 1;
+        else if(status == 1) status = 2;
+        else if(status == 2) status = 1;
+
         User user = User.builder()
                 .userId(userId)
                 .status(status).build();
@@ -149,6 +156,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (userPageDto.getStatus() != null){
             queryWrapper.like("status",userPageDto.getStatus());
         }
+
+        queryWrapper.eq("role","customer");
         Page<User> userPage = userMapper.selectPage(page,queryWrapper);
         List<AdminGetUsersVo> list = userPage.getRecords().stream()
                 .map(user -> {
@@ -167,6 +176,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         adminGetUsersPageVo.setList(list);
         adminGetUsersPageVo.setTotal(list.size());
         return adminGetUsersPageVo;
+    }
+
+
+    /**
+     * 管理员分页查询职工
+     *
+     * @param staffPageDto
+     * @return
+     */
+    @Override
+    public AdminGetStaffsPageVo getStaffs(StaffPageDto staffPageDto) {
+        Long userId = ThreadLocalUtil.getUserId();
+        if (userId == null){
+            throw new UserNotLoginException();
+        }
+        AdminGetStaffsPageVo adminGetStaffsPageVo = new AdminGetStaffsPageVo();
+        Page<User> page = new Page<>(staffPageDto.getPage(),staffPageDto.getPageSize());
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        if (staffPageDto.getKeyword() != null){
+            queryWrapper.like("username",staffPageDto.getKeyword());
+        }
+        if (staffPageDto.getStatus() != null){
+            queryWrapper.like("status",staffPageDto.getStatus());
+        }
+
+        queryWrapper.eq("role","staff");
+        Page<User> userPage = userMapper.selectPage(page,queryWrapper);
+        List<AdminGetStaffsVo> list = userPage.getRecords().stream()
+                .map(user -> {
+                    AdminGetStaffsVo adminGetStaffsVo = new AdminGetStaffsVo();
+                    adminGetStaffsVo.setUserId(user.getUserId());
+                    adminGetStaffsVo.setUsername(user.getUsername());
+                    adminGetStaffsVo.setName(user.getName());
+                    adminGetStaffsVo.setPhone(user.getPhone());
+                    adminGetStaffsVo.setStatus(user.getStatus());
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                    String datetime = sdf.format(user.getCreateTime());
+                    adminGetStaffsVo.setCreateTime(datetime);
+                    return adminGetStaffsVo;
+                }).collect(Collectors.toList());
+        adminGetStaffsPageVo.setList(list);
+        adminGetStaffsPageVo.setTotal(list.size());
+        return  adminGetStaffsPageVo;
     }
 
     /**

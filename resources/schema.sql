@@ -8,7 +8,7 @@ use roombooking;
 -- 用户表
 CREATE TABLE `user` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
-  `username` varchar(50) NOT NULL COMMENT '账号',
+  `username` varchar(50) UNIQUE NOT NULL COMMENT '账号',
   `password` varchar(100) NOT NULL COMMENT '密码(加密)',
   `name` varchar(50) NOT NULL COMMENT '姓名',
   `phone` varchar(20) NOT NULL COMMENT '联系电话',

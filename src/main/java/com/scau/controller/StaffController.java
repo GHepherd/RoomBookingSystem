@@ -29,14 +29,14 @@ public class StaffController {
      * @param cancellationId
      * @return
      */
-    @PostMapping("/cancellations/{cancellationId}/process")
+    @PutMapping("/cancellations/{cancellationId}/process")
     public ResponseResult process(@PathVariable("cancellationId") Long cancellationId) {
         cancellationService.process(cancellationId);
         return ResponseResult.successResult();
     }
 
     @PutMapping("/rooms/{roomId}/status")
-    public ResponseResult updateStatus(@PathVariable Long roomId, RoomDto roomDto){
+    public ResponseResult updateStatus(@PathVariable Long roomId,@RequestBody RoomDto roomDto){
         roomService.updateStatus(roomId,roomDto);
         return ResponseResult.successResult(ResponseConstant.UPDATE_SUCCESS);
     }
@@ -47,7 +47,7 @@ public class StaffController {
         return ResponseResult.successResult(result);
     }
 
-    @GetMapping("/cancellation")
+    @PostMapping("/cancellations")
     public ResponseResult<OrderCancellationVO> getCancellations(@RequestBody OrderPageDto orderPageDto){
         OrderCancellationVO result=cancellationService.getCancellation(orderPageDto);
         return ResponseResult.successResult(result);

@@ -13,7 +13,7 @@
     </resultMap>
     <select id="getOrderCancellation" resultType="com.scau.entity.pojo.OrderCancellation">
         select C.cancellation_id,B.booking_id,B.order_id,R.room_id,U.user_id,U.name as userName,R.name as roomName,
-               O.start_time,O.end_time,O.total_amount,O.payment_time,C.refund_amount
+               O.start_time,O.end_time,O.total_amount,O.date,C.refund_amount
         from roombooking.cancellation as C inner join roombooking.booking as B,
              roombooking.orders as O, roombooking.user as U, roombooking.room as R
         where C.booking_id=B.booking_id and B.order_id=O.order_id and B.room_id=R.room_id

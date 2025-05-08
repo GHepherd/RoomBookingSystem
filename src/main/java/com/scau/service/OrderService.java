@@ -15,6 +15,8 @@ public interface OrderService extends IService<Order> {
 
     void orderCancel(Long orderId);
 
+    void delayOrderCancel(Long orderId);
+
     ResponseResult payOrder(Long orderId);
 
     OrderPageVo getOrderPage(OrderPageDto orderPageDto);

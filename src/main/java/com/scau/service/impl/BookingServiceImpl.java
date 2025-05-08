@@ -167,14 +167,16 @@ public class BookingServiceImpl extends ServiceImpl<BookingMapper, Booking>
         }
         Booking booking = bookingMapper.selectById(bookingId);
         Date date = booking.getDate();
+        Integer startTime = booking.getStartTime();
+        Integer startTimeMS = startTime + 3600000;
         Date now = new Date();
         Date t1 = new Date();
         Date t2 = new Date();
         Date t3 = new Date();
         BigDecimal estimatedRefund = new BigDecimal(0);
-        t1.setTime(date.getTime()-86400000);
-        t2.setTime(date.getTime()-86400000*2);
-        t3.setTime(date.getTime()-86400000*3);
+        t1.setTime(date.getTime()-86400000+startTimeMS);
+        t2.setTime(date.getTime()-86400000*2+startTimeMS);
+        t3.setTime(date.getTime()-86400000*3+startTimeMS);
         if(now.after(t1)){
             throw new BaseException("取消失败,已超时");
         }

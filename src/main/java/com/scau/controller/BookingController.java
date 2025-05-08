@@ -23,7 +23,7 @@ public class BookingController {
      * @param bookingRoomPageDto
      * @return
      */
-    @GetMapping("/rooms")
+    @PostMapping("/rooms")
     public ResponseResult<BookingRoomPageVo> getBookingRooms(@RequestBody BookingRoomPageDto bookingRoomPageDto) {
         BookingRoomPageVo bookingRoomPageVo = roomService.getBookingRooms(bookingRoomPageDto);
         return ResponseResult.successResult(bookingRoomPageVo);
@@ -46,7 +46,7 @@ public class BookingController {
      * @param bookingRoomPageDto
      * @return
      */
-    @GetMapping("/bookings")
+    @PostMapping("/bookings")
     public ResponseResult<SuccessBookingPageVo> getBookings(@RequestBody BookingRoomPageDto bookingRoomPageDto) {
         return ResponseResult.successResult(bookingService.getBookings(bookingRoomPageDto));
     }

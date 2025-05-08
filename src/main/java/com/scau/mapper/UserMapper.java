@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Select;
 */
 public interface UserMapper extends BaseMapper<User> {
 
+
 }
 
 

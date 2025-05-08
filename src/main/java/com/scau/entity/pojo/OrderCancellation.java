@@ -28,7 +28,7 @@ public class OrderCancellation {
 
     private BigDecimal totalAmount;
 
-    private String paymentTime;
+    private String date;
 
     private BigDecimal refundAmount;
 

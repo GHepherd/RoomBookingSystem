@@ -127,7 +127,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
         Integer pageSize = bookingRoomPageDto.getPageSize();
         int startIndex = (page-1)*pageSize;
         int endIndex = page * pageSize;
-        bookingRoomPageVo.setBookingRoomVos(bookingRoomVos.subList(startIndex, endIndex));
+        bookingRoomPageVo.setBookingRoomVos(bookingRoomVos.subList(startIndex, endIndex>bookingRoomVos.size()?bookingRoomVos.size():endIndex));
         return bookingRoomPageVo;
     }
 
@@ -229,6 +229,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
         LambdaUpdateWrapper<Room> updateWrapper=new LambdaUpdateWrapper<>();
         updateWrapper.set(Room::getStatus,status)
                 .eq(Room::getRoomId,roomId);
+        roomMapper.update(updateWrapper);
     }
 
     @Override
