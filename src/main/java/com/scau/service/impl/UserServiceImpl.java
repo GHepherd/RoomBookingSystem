@@ -174,7 +174,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                     return adminGetUsersVo;
                 }).collect(Collectors.toList());
         adminGetUsersPageVo.setList(list);
-        adminGetUsersPageVo.setTotal(list.size());
+        adminGetUsersPageVo.setTotal((int) userPage.getTotal());
         return adminGetUsersPageVo;
     }
 
@@ -217,7 +217,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                     return adminGetStaffsVo;
                 }).collect(Collectors.toList());
         adminGetStaffsPageVo.setList(list);
-        adminGetStaffsPageVo.setTotal(list.size());
+        adminGetStaffsPageVo.setTotal((int)userPage.getTotal());
         return  adminGetStaffsPageVo;
     }
 

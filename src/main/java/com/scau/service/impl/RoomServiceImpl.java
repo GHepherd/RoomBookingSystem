@@ -90,7 +90,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
         queryWrapper.eq(bookingRoomPageDto.getHasNetwork()!=null,"has_network",bookingRoomPageDto.getHasNetwork());
         queryWrapper.eq(bookingRoomPageDto.getType()!=null&& !bookingRoomPageDto.getType().isEmpty(),"type",bookingRoomPageDto.getType());
         queryWrapper.like(bookingRoomPageDto.getKeyword()!=null&&bookingRoomPageDto.getKeyword().isEmpty(),"name",bookingRoomPageDto.getKeyword());
-        queryWrapper.ne("status",4);
+        queryWrapper.eq("status",0);
         queryWrapper.orderByAsc("room_id");
         List<Room> rooms = roomMapper.selectList(queryWrapper);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -213,7 +213,7 @@ public class RoomServiceImpl extends ServiceImpl<RoomMapper, Room>
                     return adminRoomVo;
         }).collect(Collectors.toList());
         adminRoomPageVo.setList(list);
-        adminRoomPageVo.setTotal(list.size());
+        adminRoomPageVo.setTotal(Integer.valueOf((int) roomPage.getTotal()));
         return adminRoomPageVo;
     }
 

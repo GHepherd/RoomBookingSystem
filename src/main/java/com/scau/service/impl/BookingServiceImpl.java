@@ -138,6 +138,8 @@ public class BookingServiceImpl extends ServiceImpl<BookingMapper, Booking>
         queryWrapper.eq("user_id",userId);
         queryWrapper.eq("status",0);
         queryWrapper.orderByDesc("create_time");
+        queryWrapper.eq("status",0);  //待确认
+        queryWrapper.eq("status",3);  //已完成
         page = bookingMapper.selectPage(page, queryWrapper);
         List<Booking> records = page.getRecords();
         successBookingPageVo.setTotal((int) page.getTotal());
